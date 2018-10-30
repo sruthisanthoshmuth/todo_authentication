@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class AuthenticationController {
-    @PostMapping(path = "/signup")
+    @PostMapping(path = "/Signup")
    private void signup(){
 
     }
