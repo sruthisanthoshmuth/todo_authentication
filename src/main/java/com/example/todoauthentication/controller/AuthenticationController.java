@@ -1,5 +1,6 @@
 package com.example.todoauthentication.controller;
 
+import com.example.todoauthentication.entity.SignupEntity;
 import com.example.todoauthentication.model.Signup;
 import com.example.todoauthentication.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,8 @@ public class AuthenticationController {
 
 
     @PostMapping(value = "/signup")
-   private void signup(@RequestBody Signup signupBean){
-        authenticationService.signUpService(signupBean);
+   private String signup(@RequestBody Signup signupBean){
+         return authenticationService.signUpService(signupBean);
 
 
     }

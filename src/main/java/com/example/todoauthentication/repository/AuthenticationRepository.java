@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import java.util.List;
 import java.util.Optional;
 @Repository
-public interface Authentication extends JpaRepository<SignupEntity, String> {
+public interface AuthenticationRepository extends JpaRepository<SignupEntity, String> {
 
 
     

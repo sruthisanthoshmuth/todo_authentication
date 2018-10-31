@@ -3,7 +3,6 @@ package com.example.todoauthentication.model;
 public class Signup {
 
     private String  username;
-
     private  String fullname;
     private String password;
 
