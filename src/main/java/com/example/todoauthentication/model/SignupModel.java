@@ -1,6 +1,6 @@
 package com.example.todoauthentication.model;
 
-public class Signup {
+public class SignupModel {
 
     private String  username;
     private  String fullname;
