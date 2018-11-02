@@ -40,7 +40,7 @@ public class TodoService {
 
     }
 
-    public List<TodoEntity> getList(String username, Date date) {
+    public List<TodoEntity> getList(String username, Date date) {//to get todo list.
         List<TodoEntity> todoList = null;
         todoList = todoEventRepository.findAllByUsernameAndTodoDate(username,date);
         return todoList;
@@ -51,5 +51,5 @@ public class TodoService {
         todoList = todoEventRepository.findAllByUsername(username);
         return todoList;
     }
-//
+
 }
