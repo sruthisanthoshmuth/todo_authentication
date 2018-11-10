@@ -1,12 +1,16 @@
 package com.example.todoauthentication.service;
 
+import com.example.todoauthentication.DefaultResponse;
 import com.example.todoauthentication.entity.SignupEntity;
 import com.example.todoauthentication.model.SignupModel;
 import com.example.todoauthentication.repository.AuthenticationRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.logging.LogRecord;
 
 @Service
 public class AuthenticationService {
@@ -15,7 +19,8 @@ public class AuthenticationService {
     private AuthenticationRepository authenticationRepository;  //Repository
 
 
-    public String signUpService(SignupModel signupModelBean) {
+    public String signUpService(SignupModel signupModelBean) throws JsonProcessingException {
+        DefaultResponse defaultResponse = new DefaultResponse();
         String status;
         String userName = signupModelBean.getUsername();
         List<SignupEntity> signups =  authenticationRepository.findAllByUsername(userName);
@@ -31,11 +36,14 @@ public class AuthenticationService {
 
             status = "username already exists";
         }
+        defaultResponse.setMessage(status);
+        ObjectMapper objmap = new ObjectMapper();
+        status = objmap.writeValueAsString(defaultResponse);
         return status;
 
     }
 
-    public String SignInService(SignupModel signupModel) {
+    public String SignInService(SignupModel signupModel) throws JsonProcessingException {
         String status;
         List<SignupEntity> signinCredentials = authenticationRepository.findAllByUsernameAndPassword(signupModel.getUsername(),signupModel.getPassword());
         if(!signinCredentials.isEmpty()||signinCredentials != null){
@@ -45,6 +53,10 @@ public class AuthenticationService {
             status = "password or username error";
 
         }
+        DefaultResponse defaultResponse = new DefaultResponse();
+        defaultResponse.setMessage(status);
+        ObjectMapper objmap = new ObjectMapper();
+        status = objmap.writeValueAsString(defaultResponse);
         return status;
     }
 }
