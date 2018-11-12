@@ -46,7 +46,7 @@ public class AuthenticationService {
     public String SignInService(SignupModel signupModel) throws JsonProcessingException {
         String status;
         List<SignupEntity> signinCredentials = authenticationRepository.findAllByUsernameAndPassword(signupModel.getUsername(),signupModel.getPassword());
-        if(!signinCredentials.isEmpty()||signinCredentials != null){
+        if(!signinCredentials.isEmpty()){
             status = "signin success";
 
         }else{

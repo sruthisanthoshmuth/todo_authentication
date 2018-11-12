@@ -74,10 +74,11 @@ public class TodoService {
             todoListFrontModel.setCssColor(color);
             todoFront.add(todoListFrontModel);
         }
+        System.out.println(todoFront.toString());
         return todoFront;
     }
 
-    public String updateStatus(TodoEventModel todoEventModel ) {
+    public String updateStatus(TodoEventModel todoEventModel ) throws JsonProcessingException {
         String status;
 
         if(todoEventModel!=null ) {
@@ -93,6 +94,10 @@ public class TodoService {
 
 
         }
+        DefaultResponse defaultResponse = new DefaultResponse();
+        defaultResponse.setMessage(status);
+        ObjectMapper objmap = new ObjectMapper();
+        status = objmap.writeValueAsString(defaultResponse);
         return status;
     }
 

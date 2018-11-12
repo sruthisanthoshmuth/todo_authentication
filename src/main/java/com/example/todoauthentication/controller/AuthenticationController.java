@@ -51,11 +51,12 @@ public class AuthenticationController {
     @GetMapping(value = "/todolistall")
     private  List<TodoListFrontModel> getCalendarList(@RequestParam String username){
         return todoService.getAllTodo(username);
+
     }
 
 
     @PostMapping(value = "/editstatus")
-    private String changeStatus(@RequestBody TodoEventModel todoEventModel){
+    private String changeStatus(@RequestBody TodoEventModel todoEventModel) throws JsonProcessingException {
         return todoService.updateStatus(todoEventModel);
     }
 
