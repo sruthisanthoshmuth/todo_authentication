@@ -35,5 +35,5 @@ public class TodoEntity {
 
     @Column(name = "todo_status")
     @NotNull
-    private String todoStatus;
+    private Boolean todoStatus;
 }

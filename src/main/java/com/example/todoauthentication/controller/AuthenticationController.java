@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -24,45 +25,51 @@ public class AuthenticationController {
 
 
     @PostMapping(value = "/signup")
-   private String signup(@RequestBody SignupModel signupModelBean) throws JsonProcessingException {
+   private String signup(@RequestBody SignupModel signupModelBean, HttpServletRequest request) throws JsonProcessingException {
 
-         return authenticationService.signUpService(signupModelBean);
+
+         return authenticationService.signUpService(signupModelBean, request);
 
     }
 
     @PostMapping(value = "/signin")
-    private String signin(@RequestBody SignupModel signupModel) throws JsonProcessingException {
-        return authenticationService.SignInService(signupModel);
+    private String signin(@RequestBody SignupModel signupModel, HttpServletRequest request) throws JsonProcessingException {
+        return authenticationService.SignInService(signupModel, request);
     }
 
 //        { "username":"user", "todoTitle":"todoos", "todoDate":"2012-08-20" }
     @PostMapping(value = "/addtodo")
-    private String addTodo(@RequestBody TodoEventModel todoEventModel) throws JsonProcessingException {
-        return todoService.addTodoEvent(todoEventModel);
+    private String addTodo(@RequestBody String todoTitle, HttpServletRequest request) throws JsonProcessingException {
+        return todoService.addTodoEvent(todoTitle, request);
     }
 
 
     @GetMapping(value = "/todolist")
-    private List<TodoEntity> getTodoList(@RequestParam String username, @RequestParam Date date){
-        return todoService.getList(username,date);
+    private List<TodoEntity> getTodoList(HttpServletRequest request){
+        return todoService.getList(request);
     }
 
 
     @GetMapping(value = "/todolistall")
-    private  List<TodoListFrontModel> getCalendarList(@RequestParam String username){
-        return todoService.getAllTodo(username);
+    private  List<TodoListFrontModel> getCalendarList(HttpServletRequest request){
+        return todoService.getAllTodo(request);
 
     }
 
 
     @PostMapping(value = "/editstatus")
-    private String changeStatus(@RequestBody TodoEventModel todoEventModel) throws JsonProcessingException {
-        return todoService.updateStatus(todoEventModel);
+    private String changeStatus(@RequestBody TodoEventModel todoEventModel, HttpServletRequest request) throws JsonProcessingException {
+        return todoService.updateStatus(todoEventModel,request);
     }
 
     @PostMapping(value = "/deletetodo")
-    private String deleteTodo(@RequestBody TodoEventModel todoEventModel){
-        return todoService.removeTodo(todoEventModel);
+    private String deleteTodo(@RequestBody String todoTitle, HttpServletRequest request){
+        return todoService.removeTodo(todoTitle,request);
+    }
+
+    @GetMapping(value = "/adddate")
+    private String addDate(@RequestParam Date date, HttpServletRequest request) throws JsonProcessingException {
+        return todoService.assignDate(date, request);
     }
 
 

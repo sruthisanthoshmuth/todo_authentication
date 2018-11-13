@@ -7,22 +7,27 @@ import com.example.todoauthentication.repository.AuthenticationRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.logging.LogRecord;
 
 @Service
 public class AuthenticationService {
 
+
     @Autowired
     private AuthenticationRepository authenticationRepository;  //Repository
 
 
-    public String signUpService(SignupModel signupModelBean) throws JsonProcessingException {
+    public String signUpService(SignupModel signupModelBean, HttpServletRequest request) throws JsonProcessingException {
         DefaultResponse defaultResponse = new DefaultResponse();
         String status;
         String userName = signupModelBean.getUsername();
+        HttpSession httpSession = request.getSession();
         List<SignupEntity> signups =  authenticationRepository.findAllByUsername(userName);
         if(signups ==null || signups.isEmpty()) {
             status = "success";
@@ -31,6 +36,7 @@ public class AuthenticationService {
             signupEntity.setPassword(signupModelBean.getPassword());
             signupEntity.setUsername(signupModelBean.getUsername());
             authenticationRepository.save(signupEntity);
+            httpSession.setAttribute("username",signupEntity.getUsername());
 
         }else{
 
@@ -43,12 +49,13 @@ public class AuthenticationService {
 
     }
 
-    public String SignInService(SignupModel signupModel) throws JsonProcessingException {
+    public String SignInService(SignupModel signupModel, HttpServletRequest request) throws JsonProcessingException {
         String status;
+        HttpSession httpSession = request.getSession();
         List<SignupEntity> signinCredentials = authenticationRepository.findAllByUsernameAndPassword(signupModel.getUsername(),signupModel.getPassword());
         if(!signinCredentials.isEmpty()){
-            status = "signin success";
-
+            status = "success";
+            httpSession.setAttribute("username", signupModel.getUsername());
         }else{
             status = "password or username error";
 
