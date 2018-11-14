@@ -2,8 +2,10 @@ package com.example.todoauthentication.service;
 
 import com.example.todoauthentication.DefaultResponse;
 import com.example.todoauthentication.entity.TodoEntity;
-import com.example.todoauthentication.entity.TodoListFrontModel;
+import com.example.todoauthentication.model.TodoListFrontModel;
+import com.example.todoauthentication.model.DateOfEvent;
 import com.example.todoauthentication.model.TodoEventModel;
+import com.example.todoauthentication.model.TodoListModel;
 import com.example.todoauthentication.repository.TodoEventRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,12 +52,19 @@ public class TodoService {
 
     }
 
-    public List<TodoEntity> getList(HttpServletRequest request) {//to get to-do
-        List<TodoEntity> todoList = null;
+    public List<TodoListModel> getList(HttpServletRequest request) {//to get to-do
+        List<TodoListModel> todoList = new ArrayList<TodoListModel>();
+        List<TodoEntity> entityList = null;
         HttpSession httpSession = request.getSession();
         Date date = (Date)httpSession.getAttribute("date");
         String username = httpSession.getAttribute("username").toString();
-        todoList = todoEventRepository.findAllByUsernameAndTodoDate(username,date);
+        entityList = todoEventRepository.findAllByUsernameAndTodoDate(username,date);
+        for (TodoEntity todo:entityList) {
+            TodoListModel todoListModel = new TodoListModel();
+            todoListModel.setMessage(todo.getTodoTitle());
+            todoListModel.setStatus(todo.getTodoStatus());
+            todoList.add(todoListModel);
+        }
         return todoList;
     }
 
@@ -66,17 +75,24 @@ public class TodoService {
         String username = httpSession.getAttribute("username").toString();
         todoList = todoEventRepository.findAllByUsername(username);
         System.out.println(todoFront.isEmpty());
+        Date date = new Date();
+//        String modifiedDate= new SimpleDateFormat("yyyy-MM-dd").format(date);
         for (TodoEntity todols: todoList) {
             String color = null;
             if (todols.getTodoStatus()) {
                 color= "green";
             }else{
-                color ="red";
+                if(todols.getTodoDate().after(date)){
+                    color = "yellow";
+                }else {
+                    color = "red";
+                }
             }
             TodoListFrontModel todoListFrontModel = new TodoListFrontModel();
             todoListFrontModel.setTitle(todols.getTodoTitle());
             todoListFrontModel.setStart(todols.getTodoDate());
-            todoListFrontModel.setCssColor(color);
+            todoListFrontModel.setColor(color);
+            todoListFrontModel.setTextColor("black");
             todoFront.add(todoListFrontModel);
         }
         System.out.println(todoFront.toString());
@@ -84,16 +100,15 @@ public class TodoService {
     }
 
     public String updateStatus(TodoEventModel todoEventModel, HttpServletRequest request ) throws JsonProcessingException {
-        String status;
+        String status = null;
         HttpSession httpSession = request.getSession();
-        if(todoEventModel!=null ) {
-            TodoEntity todoEntity = new TodoEntity();
-            todoEntity.setTodoDate((Date)httpSession.getAttribute("date"));
-            todoEntity.setUsername(httpSession.getAttribute("username").toString());
-            todoEntity.setTodoTitle(todoEventModel.getTodoTitle());
-            todoEntity.setTodoStatus(todoEventModel.getTodoStatus());
-            todoEventRepository.save(todoEntity);
-            status = "success";
+        List<TodoEntity> todoList = todoEventRepository.findAllByUsernameAndTodoDateAndTodoTitle(httpSession.getAttribute("username").toString(),(Date)httpSession.getAttribute("date"),todoEventModel.getTodoTitle());
+        if(todoEventModel!=null && !todoList.isEmpty()) {
+            for(TodoEntity todoEntity: todoList) {
+                todoEntity.setTodoStatus(todoEventModel.getTodoStatus());
+                todoEventRepository.save(todoEntity);
+                status = "success";
+            }
         }else{
             status = "status cannot be updated.";
 
@@ -106,28 +121,31 @@ public class TodoService {
         return status;
     }
 
-    public String removeTodo(String todoTitle, HttpServletRequest request) {
-        String status;
+    public String removeTodo(String todoTitle, HttpServletRequest request) throws JsonProcessingException {
+        String status = null;
         HttpSession httpSession = request.getSession();
-        if(todoTitle!=null||todoTitle!="" ) {
-            TodoEntity todoEntity = new TodoEntity();
-            Date date =(Date) httpSession.getAttribute("date");
-            todoEntity.setTodoDate(date);
-            todoEntity.setUsername(httpSession.getAttribute("username").toString());
-            todoEntity.setTodoTitle(todoTitle);
-            todoEventRepository.delete(todoEntity);
-            status = "success";
+        List<TodoEntity> todoList = todoEventRepository.findAllByUsernameAndTodoDateAndTodoTitle(httpSession.getAttribute("username").toString(),(Date)httpSession.getAttribute("date"),todoTitle);
+        if(!todoList.isEmpty() ) {
+            for(TodoEntity todoEntity: todoList) {
+                todoEventRepository.delete(todoEntity);
+                status = "success";
+            }
         }else{
             status = "todo cannot be deleted.";
 
 
         }
+        DefaultResponse defaultResponse = new DefaultResponse();
+        defaultResponse.setMessage(status);
+        ObjectMapper objmap = new ObjectMapper();
+        status = objmap.writeValueAsString(defaultResponse);
         return status;
     }
 
-    public String assignDate(Date date, HttpServletRequest request) throws JsonProcessingException {
+    public String assignDate(DateOfEvent date, HttpServletRequest request) throws JsonProcessingException {
         HttpSession httpSession = request.getSession();
-        httpSession.setAttribute("date",date);
+        System.err.println(date.toString());
+        httpSession.setAttribute("date",date.getDate());
         DefaultResponse defaultResponse = new DefaultResponse();
         defaultResponse.setMessage("success");
         ObjectMapper objmap = new ObjectMapper();

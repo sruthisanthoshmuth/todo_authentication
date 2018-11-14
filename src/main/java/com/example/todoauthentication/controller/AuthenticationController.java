@@ -1,9 +1,7 @@
 package com.example.todoauthentication.controller;
 
 import com.example.todoauthentication.entity.TodoEntity;
-import com.example.todoauthentication.entity.TodoListFrontModel;
-import com.example.todoauthentication.model.SignupModel;
-import com.example.todoauthentication.model.TodoEventModel;
+import com.example.todoauthentication.model.*;
 import com.example.todoauthentication.service.AuthenticationService;
 import com.example.todoauthentication.service.TodoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -39,13 +36,13 @@ public class AuthenticationController {
 
 //        { "username":"user", "todoTitle":"todoos", "todoDate":"2012-08-20" }
     @PostMapping(value = "/addtodo")
-    private String addTodo(@RequestBody String todoTitle, HttpServletRequest request) throws JsonProcessingException {
+    private String addTodo(@RequestParam String todoTitle, HttpServletRequest request) throws JsonProcessingException {
         return todoService.addTodoEvent(todoTitle, request);
     }
 
 
     @GetMapping(value = "/todolist")
-    private List<TodoEntity> getTodoList(HttpServletRequest request){
+    private List<TodoListModel> getTodoList(HttpServletRequest request){
         return todoService.getList(request);
     }
 
@@ -62,13 +59,13 @@ public class AuthenticationController {
         return todoService.updateStatus(todoEventModel,request);
     }
 
-    @PostMapping(value = "/deletetodo")
-    private String deleteTodo(@RequestBody String todoTitle, HttpServletRequest request){
+    @GetMapping(value = "/deletetodo")
+    private String deleteTodo(@RequestParam String todoTitle, HttpServletRequest request) throws JsonProcessingException {
         return todoService.removeTodo(todoTitle,request);
     }
 
-    @GetMapping(value = "/adddate")
-    private String addDate(@RequestParam Date date, HttpServletRequest request) throws JsonProcessingException {
+    @PostMapping(value = "/adddate")
+    private String addDate(@RequestBody DateOfEvent date, HttpServletRequest request) throws JsonProcessingException {
         return todoService.assignDate(date, request);
     }
 
