@@ -66,4 +66,22 @@ public class AuthenticationService {
         status = objmap.writeValueAsString(defaultResponse);
         return status;
     }
+
+    public String Logout(HttpServletRequest request) throws JsonProcessingException {
+        request.getSession().invalidate();
+        DefaultResponse defaultResponse = new DefaultResponse();
+        defaultResponse.setMessage("success");
+        ObjectMapper objmap = new ObjectMapper();
+        return objmap.writeValueAsString(defaultResponse);
+    }
+
+
+//    public SignupModel forgotPassword(SignupModel signupModel) {
+//
+//        List<SignupEntity> signupEntities = authenticationRepository.findAllByUsernameAndFullname(signupModel.getUsername(),signupModel.getFullname());
+//        for(SignupEntity signupEntity: signupEntities){
+//            signupModel.setPassword(signupEntity.getPassword());
+//        }
+//        return signupModel;
+//    }
 }

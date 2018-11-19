@@ -24,7 +24,6 @@ public class AuthenticationController {
     @PostMapping(value = "/signup")
    private String signup(@RequestBody SignupModel signupModelBean, HttpServletRequest request) throws JsonProcessingException {
 
-
          return authenticationService.signUpService(signupModelBean, request);
 
     }
@@ -33,6 +32,7 @@ public class AuthenticationController {
     private String signin(@RequestBody SignupModel signupModel, HttpServletRequest request) throws JsonProcessingException {
         return authenticationService.SignInService(signupModel, request);
     }
+
 
 //        { "username":"user", "todoTitle":"todoos", "todoDate":"2012-08-20" }
     @PostMapping(value = "/addtodo")
@@ -68,6 +68,15 @@ public class AuthenticationController {
     private String addDate(@RequestBody DateOfEvent date, HttpServletRequest request) throws JsonProcessingException {
         return todoService.assignDate(date, request);
     }
+
+    @GetMapping(value ="/signout")
+    private String signOut(HttpServletRequest request) throws JsonProcessingException {
+        return authenticationService.Logout(request);
+    }
+//    @PostMapping(value = "/forgot_password", produces = "application/json")
+//    private SignupModel forgotPWord(@RequestBody SignupModel signupModel){
+//        return authenticationService.forgotPassword(signupModel);
+//    }
 
 
 

@@ -21,4 +21,5 @@ public interface AuthenticationRepository extends JpaRepository<SignupEntity, St
     List<SignupEntity> findAllByUsernameAndPassword(String userName, String passWord);
 
 
+    List<SignupEntity> findAllByUsernameAndFullname(String username, String fullname);
 }
